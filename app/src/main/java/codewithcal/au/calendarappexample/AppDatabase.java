@@ -6,7 +6,7 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 import android.content.Context;
 
-@Database(entities = {Event.class}, version = 1)
+@Database(entities = {Event.class}, version = 2) // Aumentamos la versión para reflejar cambios en la estructura de la base de datos
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase instance;

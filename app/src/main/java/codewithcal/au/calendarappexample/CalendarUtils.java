@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class CalendarUtils
 {
-    public static LocalDate selectedDate;
+    public static LocalDate selectedDate = LocalDate.now();
 
     public static String formattedDate(LocalDate date)
     {

@@ -16,7 +16,6 @@ import android.widget.TextView;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
 public class WeekViewActivity extends AppCompatActivity implements CalendarAdapter.OnItemListener {
     private TextView monthYearText;
     private RecyclerView calendarRecyclerView;

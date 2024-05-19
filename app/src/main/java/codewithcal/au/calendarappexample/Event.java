@@ -13,13 +13,25 @@ public class Event {
     private String name;
     private LocalDate date;
     private LocalTime time;
+    private int frequency;
+    private int dosage;
+    private String comments;
+    private String medicationPackPhoto; // Foto del empaque de la medicación
+    private String pillPhoto; // Foto de la pastilla
 
     // Constructor, getters, and setters
-    public Event(String name, LocalDate date, LocalTime time) {
+    public Event(String name, LocalDate date, LocalTime time, int frequency, int dosage, String comments, String medicationPackPhoto, String pillPhoto) {
         this.name = name;
         this.date = date;
         this.time = time;
+        this.frequency = frequency;
+        this.dosage = dosage;
+        this.comments = comments;
+        this.medicationPackPhoto = medicationPackPhoto;
+        this.pillPhoto = pillPhoto;
     }
+
+    // Getters y setters para las nuevas variables
 
     public int getId() {
         return id;
@@ -39,5 +51,44 @@ public class Event {
 
     public LocalTime getTime() {
         return time;
+    }
+    public int getFrequency() {
+        return frequency;
+    }
+
+    public void setFrequency(int frequency) {
+        this.frequency = frequency;
+    }
+
+    public int getDosage() {
+        return dosage;
+    }
+
+    public void setDosage(int dosage) {
+        this.dosage = dosage;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
+    public String getMedicationPackPhoto() {
+        return medicationPackPhoto;
+    }
+
+    public void setMedicationPackPhoto(String medicationPackPhoto) {
+        this.medicationPackPhoto = medicationPackPhoto;
+    }
+
+    public String getPillPhoto() {
+        return pillPhoto;
+    }
+
+    public void setPillPhoto(String pillPhoto) {
+        this.pillPhoto = pillPhoto;
     }
 }
