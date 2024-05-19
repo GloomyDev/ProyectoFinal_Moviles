@@ -9,47 +9,89 @@
         android:layout_height="wrap_content"
         android:hint="Nombre del Medicamento" />
 
-    <Button
-        android:id="@+id/captureFotoEmpaqueBtn"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Capturar Foto del Empaque" />
+        android:orientation="horizontal">
 
-    <ImageView
-        android:id="@+id/fotoEmpaqueIV"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:contentDescription="Foto del Empaque" />
+        <Button
+            android:id="@+id/captureFotoEmpaqueBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Capturar Foto del Empaque" />
 
-    <Button
-        android:id="@+id/captureFotoPastillaBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Capturar Foto de la Pastilla" />
+        <Button
+            android:id="@+id/captureFotoPastillaBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Capturar Foto de la Pastilla" />
+    </LinearLayout>
 
-    <ImageView
-        android:id="@+id/fotoPastillaIV"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:contentDescription="Foto de la Pastilla" />
-
-    <EditText
-        android:id="@+id/frecuenciaET"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Frecuencia" />
+        android:orientation="horizontal">
 
-    <EditText
-        android:id="@+id/dosisET"
+        <ImageView
+            android:id="@+id/fotoEmpaqueIV"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:layout_weight="1"
+            android:contentDescription="Foto del Empaque" />
+
+        <ImageView
+            android:id="@+id/fotoPastillaIV"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:layout_weight="1"
+            android:contentDescription="Foto de la Pastilla" />
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Dosis" />
+        android:orientation="horizontal">
 
-    <EditText
-        android:id="@+id/comentariosET"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Comentarios" />
+        <!-- Sección de los EditText -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/frecuenciaET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Frecuencia" />
+
+            <EditText
+                android:id="@+id/dosisET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Dosis" />
+
+            <EditText
+                android:id="@+id/comentariosET"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Comentarios" />
+
+        </LinearLayout>
+
+        <!-- Sección del CalendarView -->
+        <CalendarView
+            android:id="@+id/calendarView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:dateTextAppearance="?android:attr/textAppearanceSmall" />
+
+    </LinearLayout>
+
+
 
     <Button
         android:id="@+id/saveEventBtn"

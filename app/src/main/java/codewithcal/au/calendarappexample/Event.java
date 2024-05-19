@@ -12,6 +12,7 @@ public class Event {
     private int id;
     private String name;
     private LocalDate date;
+    private LocalDate end_date;
     private LocalTime time;
     private int frequency;
     private int dosage;
@@ -20,9 +21,10 @@ public class Event {
     private String pillPhoto; // Foto de la pastilla
 
     // Constructor, getters, and setters
-    public Event(String name, LocalDate date, LocalTime time, int frequency, int dosage, String comments, String medicationPackPhoto, String pillPhoto) {
+    public Event(String name, LocalDate date, LocalDate end_date, LocalTime time, int frequency, int dosage, String comments, String medicationPackPhoto, String pillPhoto) {
         this.name = name;
         this.date = date;
+        this.end_date = end_date;
         this.time = time;
         this.frequency = frequency;
         this.dosage = dosage;
@@ -47,6 +49,10 @@ public class Event {
 
     public LocalDate getDate() {
         return date;
+    }
+
+    public LocalDate getEnd_date() {
+        return end_date;
     }
 
     public LocalTime getTime() {

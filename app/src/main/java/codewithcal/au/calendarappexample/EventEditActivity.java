@@ -14,21 +14,23 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class EventEditActivity extends AppCompatActivity {
     private EditText eventNameET, frecuenciaET, dosisET, comentariosET;
-    private TextView eventDateTV, eventTimeTV;
+    private CalendarView calendarView;
     private Button captureFotoEmpaqueBtn, captureFotoPastillaBtn, saveEventBtn;
     private ImageView fotoEmpaqueIV, fotoPastillaIV;
     private LocalTime time;
     private String medicationPackPhotoPath = "";
     private String pillPhotoPath = "";
+    private LocalDate endDate = LocalDate.now(); // Default to today
     private static final int REQUEST_IMAGE_CAPTURE_EMPAQUE = 1;
     private static final int REQUEST_IMAGE_CAPTURE_PASTILLA = 2;
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 1001;
@@ -39,8 +41,6 @@ public class EventEditActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_edit);
         initWidgets();
         time = LocalTime.now();
-//        eventDateTV.setText("Date: " + CalendarUtils.formattedDate(CalendarUtils.selectedDate));
-//        eventTimeTV.setText("Time: " + CalendarUtils.formattedTime(time));
 
         captureFotoEmpaqueBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,11 +55,26 @@ public class EventEditActivity extends AppCompatActivity {
                 captureFotoPastilla(v);
             }
         });
+
+        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+            @Override
+            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
+                endDate = LocalDate.of(year, month + 1, dayOfMonth);
+            }
+        });
+
+        saveEventBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveEventAction(v);
+            }
+        });
     }
 
     private void initWidgets() {
         eventNameET = findViewById(R.id.nombreMedicamentoET);
         frecuenciaET = findViewById(R.id.frecuenciaET);
+        calendarView = findViewById(R.id.calendarView);
         dosisET = findViewById(R.id.dosisET);
         comentariosET = findViewById(R.id.comentariosET);
         captureFotoEmpaqueBtn = findViewById(R.id.captureFotoEmpaqueBtn);
@@ -76,7 +91,7 @@ public class EventEditActivity extends AppCompatActivity {
         String comments = comentariosET.getText().toString();
 
         // Crear un nuevo objeto Event con los datos ingresados por el usuario
-        Event newEvent = new Event(eventName, CalendarUtils.selectedDate, time, frequency, dosage, comments, medicationPackPhotoPath, pillPhotoPath);
+        Event newEvent = new Event(eventName, CalendarUtils.selectedDate, endDate, time, frequency, dosage, comments, medicationPackPhotoPath, pillPhotoPath);
 
         // Guardar el evento en la base de datos
         new InsertEventTask().execute(newEvent);
@@ -84,24 +99,18 @@ public class EventEditActivity extends AppCompatActivity {
     }
 
     public void captureFotoEmpaque(View view) {
-        // Verificar si se tiene el permiso CAMERA
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            // Si no se tiene el permiso, solicitarlo al usuario
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
-        } else {
-            // Si se tiene el permiso, abrir la cámara
-            openCamera(REQUEST_IMAGE_CAPTURE_EMPAQUE);
-        }
+        requestCameraPermission(REQUEST_IMAGE_CAPTURE_EMPAQUE);
     }
 
     public void captureFotoPastilla(View view) {
-        // Verificar si se tiene el permiso CAMERA
+        requestCameraPermission(REQUEST_IMAGE_CAPTURE_PASTILLA);
+    }
+
+    private void requestCameraPermission(int requestCode) {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            // Si no se tiene el permiso, solicitarlo al usuario
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
         } else {
-            // Si se tiene el permiso, abrir la cámara
-            openCamera(REQUEST_IMAGE_CAPTURE_PASTILLA);
+            openCamera(requestCode);
         }
     }
 
@@ -115,18 +124,16 @@ public class EventEditActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_CAPTURE_EMPAQUE && resultCode == RESULT_OK) {
+        if (resultCode == RESULT_OK && data != null) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-            // Guardar la imagen en el almacenamiento del dispositivo y obtener la ruta de la imagen
-            // medicationPackPhotoPath = saveImageAndGetPath(imageBitmap);
-            fotoEmpaqueIV.setImageBitmap(imageBitmap);
-        } else if (requestCode == REQUEST_IMAGE_CAPTURE_PASTILLA && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            // Guardar la imagen en el almacenamiento del dispositivo y obtener la ruta de la imagen
-            // pillPhotoPath = saveImageAndGetPath(imageBitmap);
-            fotoPastillaIV.setImageBitmap(imageBitmap);
+            if (requestCode == REQUEST_IMAGE_CAPTURE_EMPAQUE) {
+                fotoEmpaqueIV.setImageBitmap(imageBitmap);
+                // medicationPackPhotoPath = saveImageAndGetPath(imageBitmap);
+            } else if (requestCode == REQUEST_IMAGE_CAPTURE_PASTILLA) {
+                fotoPastillaIV.setImageBitmap(imageBitmap);
+                // pillPhotoPath = saveImageAndGetPath(imageBitmap);
+            }
         }
     }
 
@@ -135,10 +142,8 @@ public class EventEditActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Si el usuario concede el permiso, abrir la cámara
-                openCamera(requestCode == REQUEST_IMAGE_CAPTURE_EMPAQUE ? REQUEST_IMAGE_CAPTURE_EMPAQUE : REQUEST_IMAGE_CAPTURE_PASTILLA);
+                openCamera(REQUEST_IMAGE_CAPTURE_EMPAQUE);
             } else {
-                // Si el usuario deniega el permiso, mostrar un mensaje o tomar alguna otra acción
                 Toast.makeText(this, "Permiso de cámara denegado", Toast.LENGTH_SHORT).show();
             }
         }
@@ -147,8 +152,32 @@ public class EventEditActivity extends AppCompatActivity {
     private class InsertEventTask extends AsyncTask<Event, Void, Void> {
         @Override
         protected Void doInBackground(Event... events) {
+            Event originalEvent = events[0];
             AppDatabase db = AppDatabase.getInstance(getApplicationContext());
-            db.eventDao().insert(events[0]);
+
+            db.eventDao().insert(originalEvent);
+
+            LocalDate startDate = originalEvent.getDate();
+            int frequency = originalEvent.getFrequency();
+            LocalDate finalEndDate = endDate;
+
+            LocalDate nextDate = startDate.plusDays(frequency);
+            while (!nextDate.isAfter(finalEndDate)) {
+                Event recurringEvent = new Event(
+                        originalEvent.getName(),
+                        nextDate,
+                        endDate,
+                        originalEvent.getTime(),
+                        originalEvent.getFrequency(),
+                        originalEvent.getDosage(),
+                        originalEvent.getComments(),
+                        originalEvent.getMedicationPackPhoto(),
+                        originalEvent.getPillPhoto()
+                );
+                db.eventDao().insert(recurringEvent);
+                nextDate = nextDate.plusDays(frequency);
+            }
+
             return null;
         }
     }
